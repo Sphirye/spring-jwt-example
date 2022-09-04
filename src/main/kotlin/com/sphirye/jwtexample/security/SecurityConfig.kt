@@ -12,14 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.filter.CorsFilter
+import javax.servlet.http.HttpServletResponse
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     private val tokenProvider: TokenProvider,
-    private val corsFilter: CorsFilter,
-    private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
-    private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
+    private val corsFilter: CorsFilter
 ) {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -39,14 +38,18 @@ class SecurityConfig(
     @Throws(Exception::class)
     fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         httpSecurity
-            // token을 사용하는 방식이기 때문에 csrf를 disable합니다.
             .csrf().disable()
 
             .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter::class.java)
 
             .exceptionHandling()
-            .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .accessDeniedHandler(jwtAccessDeniedHandler)
+            .authenticationEntryPoint { _, response, ex ->
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.message)
+            }
+
+            .accessDeniedHandler { _, response, ex ->
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.message)
+            }
 
             // Enable h2-console
             .and().headers().frameOptions().sameOrigin()

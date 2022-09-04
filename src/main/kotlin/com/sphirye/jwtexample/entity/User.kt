@@ -8,7 +8,7 @@ import javax.persistence.*
 @Table(name = "`user`")
 data class User(
     @Id
-    @Column(name = "user_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var userId: Long? = null,
 
@@ -24,7 +24,7 @@ data class User(
     @ManyToMany
     @JoinTable(
         name = "user_authority",
-        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "user_id")],
+        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "role", referencedColumnName = "role")]
     )
     var authorities: Set<Authority>? = null
