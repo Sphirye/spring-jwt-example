@@ -2,15 +2,11 @@ package com.sphirye.jwtexample.service
 
 import com.sphirye.jwtexample.config.exception.DuplicatedException
 import com.sphirye.jwtexample.config.exception.NotFoundException
-import com.sphirye.jwtexample.entity.Authority
 import com.sphirye.jwtexample.entity.User
 import com.sphirye.jwtexample.repository.UserRepository
-import org.hibernate.annotations.NotFound
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
 
 @Service
 class UserService(
@@ -56,7 +52,7 @@ class UserService(
 
     fun findById(id: Long): User {
         if (!existsById(id)) { throw NotFoundException("User with $id id not found") }
-        return userRepository.findByUserId(id)
+        return userRepository.getReferenceById(id)
     }
 
     fun existsByUsername(username: String): Boolean { return userRepository.existsByUsername(username) }

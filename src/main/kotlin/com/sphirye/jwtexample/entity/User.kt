@@ -7,10 +7,8 @@ import javax.persistence.*
 @Entity
 @Table(name = "`user`")
 data class User(
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var userId: Long? = null,
+    @Id @Column(name = "id") @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
 
     @Column(name = "username")
     var username: String? = null,
