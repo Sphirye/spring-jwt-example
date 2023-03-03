@@ -1,6 +1,12 @@
 package com.sphirye.jwtexample.security
 
+import com.sphirye.jwtexample.config.CorsConfig
+import com.sphirye.jwtexample.service.UserService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
+import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -15,32 +21,18 @@ import org.springframework.web.filter.CorsFilter
 import javax.servlet.http.HttpServletResponse
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfig(
-    private val tokenProvider: TokenProvider,
-    private val corsFilter: CorsFilter
-) {
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return CustomPasswordEncoder()
-    }
+class SecurityConfig {
 
-    @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring().antMatchers(
-                "/h2-console/**", "/favicon.ico", "/error"
-            )
-        }
-    }
+    @Autowired lateinit var userService: UserService
+    @Autowired lateinit var jwtTokenFilter: JwtTokenFilter
+    @Autowired lateinit var corsFilter: CorsConfig
 
     @Bean
     @Throws(Exception::class)
     fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         httpSecurity
-            .csrf().disable()
-
-            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .cors().and().csrf().disable()
+            .addFilterBefore(corsFilter.corsFilter(), UsernamePasswordAuthenticationFilter::class.java)
 
             .exceptionHandling()
             .authenticationEntryPoint { _, response, ex ->
@@ -68,7 +60,13 @@ class SecurityConfig(
             .anyRequest().authenticated()
 
             .and()
-            .addFilterBefore(JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
         return httpSecurity.build()
     }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder { return CustomPasswordEncoder() }
+
+    @Bean
+    fun authenticationManager(): AuthenticationManager { return CustomAuthenticationManager() }
 }

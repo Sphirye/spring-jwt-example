@@ -2,6 +2,9 @@ package com.sphirye.jwtexample.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.sphirye.jwtexample.entity.model.CustomUserDetails
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import javax.persistence.*
 
 @Entity
@@ -25,5 +28,5 @@ data class User(
         joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "role", referencedColumnName = "role")]
     )
-    var authorities: Set<Authority>? = null
+    var authorities: MutableSet<Authority>? = null
 )

@@ -4,16 +4,17 @@ import com.sphirye.jwtexample.config.exception.DuplicatedException
 import com.sphirye.jwtexample.config.exception.NotFoundException
 import com.sphirye.jwtexample.entity.User
 import com.sphirye.jwtexample.repository.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class UserService(
-    private val userRepository: UserRepository,
-    private val authorityService: AuthorityService,
-    private val passwordEncoder: PasswordEncoder
-) {
+class UserService {
+
+    @Autowired lateinit var userRepository: UserRepository
+    @Autowired lateinit var authorityService: AuthorityService
+    @Autowired lateinit var passwordEncoder: PasswordEncoder
 
     fun init() {
         create("admin", "1234", "ADMIN")
@@ -32,7 +33,7 @@ class UserService(
         val user = User(
             username = username,
             password = passwordEncoder.encode(password),
-            authorities = setOf(authority),
+            authorities = mutableSetOf(authority),
             isActivated = true
         )
 
