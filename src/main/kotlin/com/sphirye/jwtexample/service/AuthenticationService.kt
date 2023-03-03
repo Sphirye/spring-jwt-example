@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthenticationService {
+
     @Autowired lateinit var userService: UserService
     @Autowired lateinit var authenticationManager: AuthenticationManager
     @Autowired lateinit var jwtTokenUtil: JwtTokenUtil

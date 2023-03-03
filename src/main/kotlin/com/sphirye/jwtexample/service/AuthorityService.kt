@@ -4,12 +4,14 @@ import com.sphirye.jwtexample.config.exception.DuplicatedException
 import com.sphirye.jwtexample.config.exception.NotFoundException
 import com.sphirye.jwtexample.entity.Authority
 import com.sphirye.jwtexample.repository.AuthorityRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class AuthorityService(
-    private val authorityRepository: AuthorityRepository
-) {
+class AuthorityService {
+
+    @Autowired lateinit var authorityRepository: AuthorityRepository
+
     fun init() {
         create("ADMIN")
         create("MOD")

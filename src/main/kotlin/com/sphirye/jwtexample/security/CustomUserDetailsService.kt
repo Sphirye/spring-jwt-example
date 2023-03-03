@@ -2,6 +2,7 @@ package com.sphirye.jwtexample.security
 
 import com.sphirye.jwtexample.entity.Authority
 import com.sphirye.jwtexample.repository.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -12,9 +13,10 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.stream.Collectors
 
 @Component("userDetailsService")
-class CustomUserDetailsService(
-    private val userRepository: UserRepository
-) : UserDetailsService {
+class CustomUserDetailsService : UserDetailsService {
+
+    @Autowired lateinit var userRepository: UserRepository
+
     @Transactional
     override fun loadUserByUsername(username: String): UserDetails {
         return userRepository.findOneWithAuthoritiesByUsername(username)
